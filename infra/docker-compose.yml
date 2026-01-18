@@ -1,0 +1,39 @@
+
+name: minutesai
+services:
+  minutesai-postgres:
+    image: postgres:16
+    container_name: minutesai-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: minutesai_user
+      POSTGRES_PASSWORD: minutesai_password
+      POSTGRES_DB: minutesai_db
+    volumes:
+      - minutesai_pgdata:/var/lib/postgresql/data
+    ports:
+      - "5434:5432"
+    healthcheck:
+      test: ["CMD-SHELL", pg_isready -U minutesai_user -d minutesai_db]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    
+  minutesai-redis:
+    image: redis:7
+    container_name: minutesai-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - minutesai_redisdata:/data
+    command: ["redis-server", "--appendonly","yes"]
+    healthcheck:
+      test: ["CMD", "redis-cli","ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+volumes:
+  minutesai_pgdata:
+  minutesai_redisdata:
