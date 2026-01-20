@@ -17,12 +17,28 @@ async def join_meeting(ctx,payload):
 
         await page.wait_for_selector("button",timeout=30000)
 
-        await enter_name(page,"Minutes AI")
-        print("Entered the Name")
+        # await enter_name(page,"Minutes AI")
+        # print("Entered the Name")
 
-        # await disable_button(page,'button[aria-label*="camera"]')
+        mic_btn = page.get_by_role("button",name="Turn off microphone")
 
-        # await disable_button(page,'button[aria-label*="microphone"]')
+        await mic_btn.click()
+
+        cam_btn = page.get_by_role("button",name="Turn off camera")
+
+        await cam_btn.click()
+
+        # await disable_button(page,'button[aria-label*="Turn off microphone"]')
+
+        # await disable_button(page,'button[aria-label*="Turn off camera"]')
+
+        # await page.screenshot(
+        #     path="before_join.png",
+        #     full_page=False
+        # )
+        # print("Screenshot saved: before_join.png")
+
+        # await asyncio.sleep(120)
 
         await join_button(page)
         print("clicked join button")

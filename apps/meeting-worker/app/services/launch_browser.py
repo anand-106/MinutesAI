@@ -1,4 +1,5 @@
 from playwright.async_api import async_playwright
+from playwright_stealth import Stealth
 
 async def launch_browser():
 
@@ -10,14 +11,18 @@ async def launch_browser():
             "--use-fake-ui-for-media-stream",
             "--no-sandbox",
             "--disable-dev-shm-usage",
-            "--disable-blink-features=AutomationControlled"
+            "--disable-blink-features=AutomationControlled",
+             "--use-fake-device-for-media-stream",
+
         ]
     )
 
     context = await browser.new_context(
         permissions=["microphone", "camera"],
-        viewport={"width":1280,"height":720}
+        viewport={"width":1280,"height":720},
+        storage_state="auth.json"
     )
+
 
     page = await context.new_page()
 
