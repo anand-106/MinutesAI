@@ -30,11 +30,12 @@ class Meeting(Base):
     user_id = Column(UUID(as_uuid=True),ForeignKey("users.id",ondelete="CASCADE"),nullable=False)
     bucket = Column(String,nullable=True)
     key = Column(String,nullable=True)
+    link = Column(String,nullable=True)
     upload_id = Column(String,nullable=True)
     status = Column(Enum(Status),default=Status.not_started)
 
     user = relationship("User",back_populates="meetings")
-    parts = relationship("Part",back_populates="meeting",cascade="all, delete-orphan",order_by="Part.part_number")
+    parts = relationship("Part",back_populates="meeting",cascade="all, delete-orphan",order_by="Part.part_id")
 
 class Part(Base):
     __tablename__ = "parts"
