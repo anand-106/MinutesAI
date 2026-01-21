@@ -7,9 +7,10 @@ from playwright.async_api import async_playwright
 
 
 class RecordingJob:
-    def __init__(self,meeting_id:str,meet_link:str):
+    def __init__(self,meeting_id:str,meet_link:str,user_id:str):
         self.meeting_id = meeting_id
         self.meet_link = meet_link
+        self.user_id = user_id
         self.display = ":99"
         self.audio_sink = "meeting_sink"
         self.audio_module_id=None
@@ -18,6 +19,8 @@ class RecordingJob:
         self.browser = None
         self.playwright = None
         self.page = None
+        self.outputFileName = f"recordings/{meeting_id}.mp4"
+        self.s3_key = f"{user_id}/meetings/{self.meeting_id}.mp4"
     
     def start_display(self):
         os.environ["DISPLAY"] = self.display
@@ -109,7 +112,7 @@ class RecordingJob:
             "-c:a", "aac",
             "-b:a", "128k",
             "-movflags", "+faststart",
-            "meeting.mp4"
+            self.outputFileName
         ]
 
         self.ffmpeg_process = subprocess.Popen(cmd)
@@ -119,6 +122,14 @@ class RecordingJob:
         if self.ffmpeg_process:
             self.ffmpeg_process.terminate()
             self.ffmpeg_process.wait()
+        
+        from app.services.s3.s3_uploader import multipart_upload_file
+
+        multipart_upload_file(
+            file_path=self.outputFileName,
+            key=self.s3_key,
+            meeting_id= self.meeting_id
+        )
         
         if self.audio_module_id:
             subprocess.run(
@@ -131,6 +142,10 @@ class RecordingJob:
         await self.browser.close()
         await self.playwright.stop()
 
+        try:
+            os.remove(self.outputFileName)
+        except OSError:
+            pass
 
     def cleanup(self):
         pass

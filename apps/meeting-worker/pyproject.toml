@@ -6,7 +6,11 @@ readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "arq>=0.26.3",
+    "boto3>=1.42.31",
+    "boto3-stubs[s3]>=1.42.31",
     "playwright>=1.57.0",
     "playwright-stealth>=2.0.1",
+    "psycopg[binary]>=3.3.2",
     "python-dotenv>=1.2.1",
+    "sqlalchemy>=2.0.45",
 ]

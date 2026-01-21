@@ -36,6 +36,7 @@ async def join_meet(request:MeetJoinIn,auth_user=Depends(verify_clerk_user),db:S
     meeting_job_queue = await create_pool(RedisSettings.from_dsn(redis_dsn))
 
     await meeting_job_queue.enqueue_job("join_meeting",{
+        "user_id":str(user.id),
         "meet-link":request.link,
         "meeting_id":meeting_row.id,
     })
