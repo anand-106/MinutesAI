@@ -1,4 +1,5 @@
 "use client"
+import { useMeetings } from "@/hooks/meetings"
 import axiosClient from "@/lib/axiosClient"
 import { useAuth } from "@clerk/nextjs"
 import { useState } from "react"
@@ -18,7 +19,7 @@ function MeetingInput(){
     const sendMeetLink = async()=>{
         try{
             const token = await getToken()
-            const res = await axiosClient.post('/meet/join',{
+            const res = await axiosClient.post('/meetings/join',{
                 link:meetLink
             },{
                 headers:{
@@ -38,5 +39,41 @@ function MeetingInput(){
         <input value={meetLink} onChange={(e)=>setMeetLink(e.target.value)} placeholder="Enter meeting link" />
         <button onClick={sendMeetLink} >Enter</button>
         </div>
+        <div>
+            <MeetingsListCard />
+        </div>
+    </div>
+}
+
+function MeetingsListCard(){
+
+   const {data,error,isLoading} = useMeetings()
+
+   if(error){
+    console.error(error)
+    return <div>
+        <h1>Error loading meetings</h1>
+    </div>
+   }
+   if(isLoading)
+    return <div>
+        <h1>
+            Loading Meetings
+        </h1>
+    </div>
+    if(data){
+        return <div>
+            {
+                data.map(meet=>{
+                    return <MeetingCard meet={meet} />
+                })
+            }
+        </div>
+    }
+}
+
+function MeetingCard({meet}:{meet:MeetingsList}){
+    return <div>
+       <h1>{meet.key}</h1>
     </div>
 }

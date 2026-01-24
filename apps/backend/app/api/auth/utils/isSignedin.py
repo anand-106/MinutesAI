@@ -4,12 +4,16 @@ from clerk_backend_api import Clerk
 from clerk_backend_api.security import AuthenticateRequestOptions
 from dotenv import load_dotenv
 import jwt
+from pydantic import BaseModel
 
 load_dotenv()
 
 clerk = Clerk(bearer_auth=os.getenv("CLERK_SECRET_KEY"))
 
-async def verify_clerk_user(request: Request):
+class ClerkUser(BaseModel):
+    clerk_user_id:str
+
+async def verify_clerk_user(request: Request)->ClerkUser:
     auth_header = request.headers.get("authorization")
     if not auth_header:
         raise HTTPException(status_code=401, detail="Missing Authorization header")
@@ -26,7 +30,7 @@ async def verify_clerk_user(request: Request):
         raise HTTPException(status_code=401, detail="User not signed in")
 
     user_id = auth_state.payload["sub"]
-    return {"clerk_user_id": user_id}
+    return ClerkUser(clerk_user_id=user_id)
 
 
 def verify_clerk_user_ws(token: str):

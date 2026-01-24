@@ -1,9 +1,9 @@
-from uuid import UUID
+from sqlalchemy.orm import Session
+from typing_extensions import List
 from arq.connections import RedisSettings
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session
-from app.api.meetings.schemas import MeetJoinIn
-from app.api.auth.utils.isSignedin import verify_clerk_user
+from app.api.meetings.schemas import GetMeetingsOut, MeetJoinIn
+from app.api.auth.utils.isSignedin import ClerkUser, verify_clerk_user
 from arq import create_pool
 from app.db.get_db import get_db
 import os
@@ -15,7 +15,7 @@ load_dotenv()
 
 redis_dsn = os.getenv("REDIS_URL", "redis://minutesai-redis:6379")
 
-meet_router = APIRouter(prefix='/meet')
+meet_router = APIRouter(prefix='/meetings')
 
 @meet_router.post('/join')
 async def join_meet(request:MeetJoinIn,auth_user=Depends(verify_clerk_user),db:Session=Depends(get_db)):
@@ -45,4 +45,19 @@ async def join_meet(request:MeetJoinIn,auth_user=Depends(verify_clerk_user),db:S
         "meeting_id":meeting_row.id,
         "meet_link":meeting_row.link
     }
+
+
+@meet_router.get("/",response_model=List[GetMeetingsOut])
+def get_meetings(auth_user:ClerkUser=Depends(verify_clerk_user),db:Session=Depends(get_db)):
+
+    try:
+        user = db.query(User).filter(User.external_auth_id == auth_user.clerk_user_id).first()
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+
+        meetings = db.query(Meeting).filter(Meeting.user_id == user.id).all()
+        return meetings
+    except Exception as e:
+        print(e)
+        raise HTTPException(500,f"Error getting meetings")
     
