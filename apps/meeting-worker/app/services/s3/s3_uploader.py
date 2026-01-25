@@ -18,6 +18,7 @@ def multipart_upload_file(
     file_path:str,
     key:str,
     meeting_id:str,
+    duration:int,
     content_type:str='video/mp4'
     
 ):
@@ -75,6 +76,7 @@ def multipart_upload_file(
         meeting.key = key
         meeting.upload_id = upload_id
         meeting.status=Status.finished
+        meeting.duration_seconds = duration
         db.commit()
 
     except Exception:

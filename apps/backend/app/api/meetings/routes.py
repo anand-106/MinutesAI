@@ -18,12 +18,12 @@ redis_dsn = os.getenv("REDIS_URL", "redis://minutesai-redis:6379")
 meet_router = APIRouter(prefix='/meetings')
 
 @meet_router.post('/join')
-async def join_meet(request:MeetJoinIn,auth_user=Depends(verify_clerk_user),db:Session=Depends(get_db)):
+async def join_meet(request:MeetJoinIn,auth_user:ClerkUser=Depends(verify_clerk_user),db:Session=Depends(get_db)):
 
     if not request.link.startswith("https://meet.google.com/"):
         raise HTTPException(500,"Enter a valid google meet url")
     
-    user:User = db.query(User).filter(User.external_auth_id == auth_user["clerk_user_id"]).first()
+    user:User = db.query(User).filter(User.external_auth_id == auth_user.clerk_user_id).first()
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
 

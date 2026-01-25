@@ -33,6 +33,8 @@ class Meeting(Base):
     link = Column(String,nullable=True)
     upload_id = Column(String,nullable=True)
     status = Column(Enum(Status),default=Status.not_started)
+    duration_seconds = Column(Integer, nullable=True)
+    created_at = Column(DateTime(timezone=True),server_default=func.now())
 
     user = relationship("User",back_populates="meetings")
     parts = relationship("Part",back_populates="meeting",cascade="all, delete-orphan",order_by="Part.part_id")

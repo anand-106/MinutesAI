@@ -21,6 +21,7 @@ class RecordingJob:
         self.page = None
         self.outputFileName = f"recordings/{meeting_id}.mp4"
         self.s3_key = f"{user_id}/meetings/{self.meeting_id}.mp4"
+        self.duration = 0
     
     def start_display(self):
         os.environ["DISPLAY"] = self.display
@@ -123,12 +124,28 @@ class RecordingJob:
             self.ffmpeg_process.terminate()
             self.ffmpeg_process.wait()
         
+            result = subprocess.run(
+            [
+                "ffprobe",
+                "-v", "error",
+                "-show_entries", "format=duration",
+                "-of", "default=noprint_wrappers=1:nokey=1",
+                self.outputFileName,
+            ],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            check=True,
+        )
+        self.duration = int(float(result.stdout.strip()))
+        
         from app.services.s3.s3_uploader import multipart_upload_file
 
         multipart_upload_file(
             file_path=self.outputFileName,
             key=self.s3_key,
-            meeting_id= self.meeting_id
+            meeting_id= self.meeting_id,
+            duration=self.duration
         )
         
         if self.audio_module_id:
