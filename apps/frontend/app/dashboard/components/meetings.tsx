@@ -1,6 +1,7 @@
 "use client"
 import { useMeetings } from "@/hooks/meetings"
 import { MeetingsList } from "@/types/types"
+import Link from "next/link"
 
 export function MeetingsListCard(){
 
@@ -22,7 +23,9 @@ export function MeetingsListCard(){
          return <div className="flex">
              {
                  data.map(meet=>{
-                     return <MeetingCard meet={meet} key={meet.upload_id} />
+                     return <Link href={`meetings/${meet.id}`} key={meet.id} >
+                     <MeetingCard meet={meet}  />
+                     </Link> 
                  })
              }
          </div>

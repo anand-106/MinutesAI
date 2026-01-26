@@ -1,4 +1,5 @@
 import axiosClient from "@/lib/axiosClient";
+import { MeetingsList } from "@/types/types";
 import { useAuth } from "@clerk/nextjs";
 import { useQuery } from "@tanstack/react-query";
 
@@ -23,5 +24,26 @@ export function useMeetings(){
     return useQuery<MeetingsList[]>({
         queryKey:["meetings"],
         queryFn:getMeetings
+    })
+}
+
+export function useMeeting(id:string){
+    const {getToken} = useAuth()
+
+    const getMeeting = async ()=>{
+        const token = await getToken();
+    
+        const res  = await axiosClient.get(`/meetings/${id}`,{
+            headers:{
+                Authorization:`Bearer ${token}`
+            }
+        })
+    
+        return res.data
+    }
+
+    return useQuery<MeetingsList>({
+        queryKey:[`metting_${id}`],
+        queryFn:getMeeting
     })
 }

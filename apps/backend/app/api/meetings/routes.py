@@ -1,3 +1,4 @@
+from uuid import UUID
 from sqlalchemy.orm import Session
 from typing_extensions import List
 from arq.connections import RedisSettings
@@ -60,4 +61,19 @@ def get_meetings(auth_user:ClerkUser=Depends(verify_clerk_user),db:Session=Depen
     except Exception as e:
         print(e)
         raise HTTPException(500,f"Error getting meetings")
-    
+
+@meet_router.get('/{meeting_id}',response_model=GetMeetingsOut)
+def get_meeting(meeting_id:UUID,auth_user:ClerkUser=Depends(verify_clerk_user),db:Session=Depends(get_db)):
+
+    try:
+        user = db.query(User).filter(User.external_auth_id == auth_user.clerk_user_id).first()
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+
+        meeting = db.query(Meeting).filter(Meeting.user_id == user.id, Meeting.id == meeting_id).first()
+        if not meeting:
+            raise HTTPException(status_code=404, detail="Meeting not found")
+        return meeting
+    except Exception as e:
+        print(e)
+        raise HTTPException(500,f"Error getting meeting")
