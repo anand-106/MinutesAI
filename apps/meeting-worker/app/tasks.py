@@ -13,7 +13,9 @@ async def join_meeting(ctx,payload):
     recorder.start_audio()
     await recorder.start_browser()
     recorder.start_ffmpeg()
-
     await asyncio.sleep(30)
 
     await recorder.stop()
+    recorder.start_audio_convert()
+    recorder.audio_convert_process.wait()
+    recorder.transcribe()

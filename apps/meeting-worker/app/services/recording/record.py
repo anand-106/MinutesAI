@@ -4,6 +4,7 @@ import subprocess
 from app.services.browser.join_button import join_button
 from app.services.browser.confirm_join import confirm_join
 from playwright.async_api import async_playwright
+from app.services.groq.transcribe import transcribe_audio
 
 
 class RecordingJob:
@@ -15,11 +16,13 @@ class RecordingJob:
         self.audio_sink = "meeting_sink"
         self.audio_module_id=None
         self.ffmpeg_process = None
+        self.audio_convert_process = None
         self.context = None
         self.browser = None
         self.playwright = None
         self.page = None
-        self.outputFileName = f"recordings/{meeting_id}.mp4"
+        self.transcribtion = None
+        self.outputFileName = f"recordings/{meeting_id}"
         self.s3_key = f"{user_id}/meetings/{self.meeting_id}.mp4"
         self.duration = 0
     
@@ -113,10 +116,31 @@ class RecordingJob:
             "-c:a", "aac",
             "-b:a", "128k",
             "-movflags", "+faststart",
-            self.outputFileName
+            self.outputFileName+".mp4"
         ]
 
         self.ffmpeg_process = subprocess.Popen(cmd)
+    
+    def start_audio_convert(self):
+        cmd = [
+            "ffmpeg",
+            "-i",
+            self.outputFileName+".mp4",
+            "-vn",
+            "-ac" ,
+            "1",
+            "-ar" ,
+            "16000",
+            "-c:a" ,
+            "flac",
+            self.outputFileName+".flac"
+        ]
+
+        self.audio_convert_process = subprocess.Popen(cmd)
+        
+        
+    def transcribe(self):
+        self.transcribtion = transcribe_audio(self.outputFileName+".flac",self.meeting_id)
 
 
     async def stop(self):
@@ -130,7 +154,7 @@ class RecordingJob:
                 "-v", "error",
                 "-show_entries", "format=duration",
                 "-of", "default=noprint_wrappers=1:nokey=1",
-                self.outputFileName,
+                self.outputFileName+".mp4",
             ],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
@@ -142,7 +166,7 @@ class RecordingJob:
         from app.services.s3.s3_uploader import multipart_upload_file
 
         multipart_upload_file(
-            file_path=self.outputFileName,
+            file_path=self.outputFileName+".mp4",
             key=self.s3_key,
             meeting_id= self.meeting_id,
             duration=self.duration
@@ -159,10 +183,10 @@ class RecordingJob:
         await self.browser.close()
         await self.playwright.stop()
 
-        try:
-            os.remove(self.outputFileName)
-        except OSError:
-            pass
+        # try:
+        #     os.remove(self.outputFileName+".mp4")
+        # except OSError:
+        #     pass
 
     def cleanup(self):
         pass

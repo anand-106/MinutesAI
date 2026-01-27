@@ -2,7 +2,7 @@
 import axiosClient from "@/lib/axiosClient"
 import { useAuth } from "@clerk/nextjs"
 import { useState } from "react"
-import { MeetingsListCard } from "./components/meetings"
+import { MeetingsListCard } from "../components/meetings"
 
 export default function DashBoard(){
     return <div>

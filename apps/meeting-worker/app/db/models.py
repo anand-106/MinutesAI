@@ -48,3 +48,69 @@ class Part(Base):
     etag=Column(String,nullable=True)
 
     meeting = relationship("Meeting",back_populates="parts")
+
+class TranscriptionJobStatus(enum.Enum):
+    queued = "queued"
+    processing = "processing"
+    completed = "completed"
+    failed = "failed"
+
+class TranscriptionJob(Base):
+    __tablename__ = "transcription_jobs"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
+    meeting_id = Column(UUID(as_uuid=True), ForeignKey("meetings.id", ondelete="CASCADE"), nullable=False)
+
+    status = Column(Enum(TranscriptionJobStatus), default=TranscriptionJobStatus.queued)
+
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    completed_at = Column(DateTime(timezone=True), nullable=True)
+
+    meeting = relationship("Meeting")
+
+class Dialogue(Base):
+    __tablename__ = "dialogues"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
+    meeting_id = Column(UUID(as_uuid=True), ForeignKey("meetings.id", ondelete="CASCADE"), nullable=False)
+
+    speaker = Column(String, nullable=True)  
+    text = Column(String, nullable=False)
+
+    start_time = Column(Integer, nullable=False) 
+    end_time = Column(Integer, nullable=False)
+
+    sequence = Column(Integer, nullable=False)
+
+    meeting = relationship("Meeting")
+
+
+class SummaryType(enum.Enum):
+    brief = "brief"
+    detailed = "detailed"
+    action_items = "action_items"
+    decisions = "decisions"
+    custom = "custom"
+
+
+class SummaryStatus(enum.Enum):
+    queued = "queued"
+    processing = "processing"
+    completed = "completed"
+    failed = "failed"
+
+
+class Summary(Base):
+    __tablename__ = "summaries"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
+    meeting_id = Column(UUID(as_uuid=True), ForeignKey("meetings.id", ondelete="CASCADE"), nullable=False)
+
+    type = Column(Enum(SummaryType), nullable=False)
+
+    content = Column(String, nullable=True)
+    status = Column(Enum(SummaryStatus), default=SummaryStatus.queued)
+
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    meeting = relationship("Meeting")

@@ -47,3 +47,26 @@ export function useMeeting(id:string){
         queryFn:getMeeting
     })
 }
+
+export function useMeetingVideoPresign(id:string){
+    const {getToken} = useAuth()
+
+    const getMeetingPresignVideo = async ()=>{
+        const token = await getToken();
+    
+        const res  = await axiosClient.get(`/meetings/${id}/presigned`,{
+            headers:{
+                Authorization:`Bearer ${token}`
+            }
+        })
+    
+        return res.data
+    }
+
+    return useQuery<{url:string}>({
+        queryKey:[`metting_${id}_presign`],
+        queryFn:getMeetingPresignVideo
+    })
+}
+
+

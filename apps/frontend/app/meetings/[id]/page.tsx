@@ -1,6 +1,8 @@
 "use client"
 import { useMeeting } from "@/hooks/meetings"
+import 'video.js/dist/video-js.css';
 import { useParams } from "next/navigation"
+import { VideoPlayer } from "@/app/components/videoPlayer";
 
 
 export default function MeetingPage(){
@@ -23,7 +25,11 @@ export default function MeetingPage(){
         </div>
 
     if(data)
-    return  <div className="h-screen w-screen">
+    return  <div className="h-full w-screen">
         <h1>Meeting #{meetingID}</h1>
+        <div className="px-7 w-1/2">
+            <VideoPlayer id={meetingID!.toString()}  />
+        </div>
     </div>
 }
+

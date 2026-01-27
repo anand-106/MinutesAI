@@ -9,8 +9,8 @@ from arq import create_pool
 from app.db.get_db import get_db
 import os
 from dotenv import load_dotenv
-
 from app.db.models import Meeting, Status, User
+from app.s3.s3 import get_s3_presigned_url
 
 load_dotenv()
 
@@ -77,3 +77,23 @@ def get_meeting(meeting_id:UUID,auth_user:ClerkUser=Depends(verify_clerk_user),d
     except Exception as e:
         print(e)
         raise HTTPException(500,f"Error getting meeting")
+
+@meet_router.get('/{meeting_id}/presigned')
+def get_presigned_url(meeting_id:UUID,auth_user:ClerkUser=Depends(verify_clerk_user),db:Session=Depends(get_db)):
+
+        try:
+            user = db.query(User).filter(User.external_auth_id == auth_user.clerk_user_id).first()
+            if not user:
+                raise HTTPException(status_code=404, detail="User not found")
+
+            meeting = db.query(Meeting).filter(Meeting.user_id == user.id, Meeting.id == meeting_id).first()
+            if not meeting:
+                raise HTTPException(status_code=404, detail="Meeting not found")
+            url = get_s3_presigned_url(key=meeting.key,content_type="video/mp4")
+
+            return {
+                "url":url
+            }
+        except Exception as e:
+            print(e)
+            raise HTTPException(500,f"Error getting meeting")
