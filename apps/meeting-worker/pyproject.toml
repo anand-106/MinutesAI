@@ -8,6 +8,7 @@ dependencies = [
     "arq>=0.26.3",
     "boto3>=1.42.31",
     "boto3-stubs[s3]>=1.42.31",
+    "deepgram-sdk>=5.3.1",
     "groq>=1.0.0",
     "playwright>=1.57.0",
     "playwright-stealth>=2.0.1",

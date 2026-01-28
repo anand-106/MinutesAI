@@ -30,8 +30,6 @@ export default function MeetingPage(){
         <h1>Meeting #{meetingID}</h1>
         <div className="px-7 w-1/2">
             <VideoPlayer id={meetingID!.toString()}  />
-        </div>
-        <div>
             <TranscriptComp  meet_id={meetingID!.toString()} />
         </div>
     </div>
