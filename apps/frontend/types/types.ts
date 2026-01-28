@@ -8,3 +8,13 @@ export interface MeetingsList {
     duration_seconds:number | null
     created_at:string
 }
+
+export interface Dialouges {
+    id:string,
+    meeting_id:string,
+    speaker:string,
+    text:string,
+    start_time:number,
+    end_time:number,
+    sequence:number
+}

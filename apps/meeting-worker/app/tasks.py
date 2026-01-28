@@ -19,3 +19,4 @@ async def join_meeting(ctx,payload):
     recorder.start_audio_convert()
     recorder.audio_convert_process.wait()
     recorder.transcribe()
+    recorder.cleanup()

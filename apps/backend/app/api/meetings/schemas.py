@@ -18,3 +18,12 @@ class GetMeetingsOut(BaseModel):
     duration_seconds:int
 
     model_config=ConfigDict(from_attributes=True)
+
+class GetDialougesOut(BaseModel):
+    id:UUID
+    meeting_id:UUID
+    speaker:str
+    text:str
+    start_time:int
+    end_time:int
+    sequence:int

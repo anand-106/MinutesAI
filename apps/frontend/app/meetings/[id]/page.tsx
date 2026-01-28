@@ -3,6 +3,7 @@ import { useMeeting } from "@/hooks/meetings"
 import 'video.js/dist/video-js.css';
 import { useParams } from "next/navigation"
 import { VideoPlayer } from "@/app/components/videoPlayer";
+import { TranscriptComp } from "@/app/components/transcript";
 
 
 export default function MeetingPage(){
@@ -29,6 +30,9 @@ export default function MeetingPage(){
         <h1>Meeting #{meetingID}</h1>
         <div className="px-7 w-1/2">
             <VideoPlayer id={meetingID!.toString()}  />
+        </div>
+        <div>
+            <TranscriptComp  meet_id={meetingID!.toString()} />
         </div>
     </div>
 }

@@ -1,5 +1,5 @@
 import axiosClient from "@/lib/axiosClient";
-import { MeetingsList } from "@/types/types";
+import { Dialouges, MeetingsList } from "@/types/types";
 import { useAuth } from "@clerk/nextjs";
 import { useQuery } from "@tanstack/react-query";
 
@@ -70,3 +70,27 @@ export function useMeetingVideoPresign(id:string){
 }
 
 
+
+export function usefetchMeetingDialouges(meet_id:string){
+    const {getToken} = useAuth()
+    const getMettingDialouges = async ()=>{
+        const token = await getToken();
+    
+        const res  = await axiosClient.get(`/meetings/${meet_id}/transcription`,{
+            headers:{
+                Authorization:`Bearer ${token}`
+            }
+        })
+        const dialouges:Dialouges[] = res.data
+
+        dialouges.sort((a,b)=>a.sequence-b.sequence)
+        
+        return dialouges
+    }
+
+    return useQuery<Dialouges[]>({
+        queryKey:[`metting_${meet_id}_dialouges`],
+        queryFn:getMettingDialouges
+    })
+
+}

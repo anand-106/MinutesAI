@@ -183,10 +183,11 @@ class RecordingJob:
         await self.browser.close()
         await self.playwright.stop()
 
-        # try:
-        #     os.remove(self.outputFileName+".mp4")
-        # except OSError:
-        #     pass
+        
 
     def cleanup(self):
-        pass
+        try:
+            os.remove(self.outputFileName+".mp4")
+            os.remove(self.outputFileName+".flac")
+        except OSError:
+            pass
