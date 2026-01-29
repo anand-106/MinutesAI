@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Literal
 from uuid import UUID
 from pydantic import BaseModel, ConfigDict
 
@@ -7,6 +8,9 @@ from app.db.models import Status
 
 class MeetJoinIn(BaseModel):
     link:str
+
+class SummarizeIn(BaseModel):
+    mode:Literal["brief","detailed","action_items","decisions","custom"]
 
 class GetMeetingsOut(BaseModel):
     id:UUID
