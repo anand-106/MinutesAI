@@ -18,3 +18,8 @@ export interface Dialouges {
     end_time:number,
     sequence:number
 }
+
+export interface SummaryOut{
+    type:"brief"|"detailed"|"action_items"|"decisions"|"custom",
+    content:string
+}

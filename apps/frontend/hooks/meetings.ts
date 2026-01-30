@@ -1,5 +1,5 @@
 import axiosClient from "@/lib/axiosClient";
-import { Dialouges, MeetingsList } from "@/types/types";
+import { Dialouges, MeetingsList, SummaryOut } from "@/types/types";
 import { useAuth } from "@clerk/nextjs";
 import { useMutation, useQuery } from "@tanstack/react-query";
 
@@ -115,4 +115,25 @@ export function useSummarizeMeeting(meet_id:string,mode:"brief"|"detailed"|"acti
      mutationFn:postSummarize
     })
 
+}
+
+export function useFetchSummaries(meet_id:string){
+    const {getToken} = useAuth()
+
+    const getMeetingSummaries = async ()=>{
+        const token = await getToken();
+    
+        const res  = await axiosClient.get(`/meetings/${meet_id}/summary`,{
+            headers:{
+                Authorization:`Bearer ${token}`
+            }
+        })
+    
+        return res.data
+    }
+
+    return useQuery<SummaryOut[]>({
+        queryKey:[`metting_${meet_id}_summaries`],
+        queryFn:getMeetingSummaries
+    })
 }

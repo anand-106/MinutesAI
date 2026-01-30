@@ -140,7 +140,7 @@ def generate_meeting_summary(req:SummarizeIn,meeting_id:UUID,auth_user:ClerkUser
         print(e)
         raise HTTPException(500,f"Error getting transcription {e}")
 
-@meet_router.post('/{meeting_id}/summary')
+@meet_router.get('/{meeting_id}/summary')
 def generate_meeting_summary(meeting_id:UUID,auth_user:ClerkUser=Depends(verify_clerk_user),db:Session=Depends(get_db)):
     try:
         user = db.query(User).filter(User.external_auth_id == auth_user.clerk_user_id).first()

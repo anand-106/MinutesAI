@@ -29,13 +29,13 @@ export default function MeetingPage(){
     if(data)
     return  <div className="h-full w-screen">
         <h1>Meeting #{meetingID}</h1>
-        <div className="px-7 w-1/2 flex">
+        <div className="px-[200px] flex">
         <div>
 
             <VideoPlayer id={meetingID!.toString()}  />
             <TranscriptComp  meet_id={meetingID!.toString()} />
         </div>
-        <div>
+        <div className="w-1/2">
             <SummaryComp meet_id={meetingID!.toString()}  />
         </div>
         </div>
