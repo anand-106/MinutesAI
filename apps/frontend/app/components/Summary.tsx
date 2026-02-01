@@ -1,5 +1,7 @@
 import { useFetchSummaries, useSummarizeMeeting } from "@/hooks/meetings"
 import { SummaryOut } from "@/types/types"
+import Markdown from "react-markdown"
+import remarkGfm from 'remark-gfm'
 
 export  function SummaryComp({meet_id}:{meet_id:string}){
 
@@ -30,8 +32,8 @@ function Summaries({meet_id}:{meet_id:string}){
         </div>
         if(data){
 
-            return <div>
-        <div>Summary</div>
+            return <div className="px-[50px]">
+        <h1 className="text-2xl font-gsans">Summary</h1>
         {
             data.map((smry,idx)=>{
                 return <div key={idx} >
@@ -45,11 +47,7 @@ function Summaries({meet_id}:{meet_id:string}){
 
 function Summary({smry}:{smry:SummaryOut}){
 return <div>
-    <h1>{smry.type}</h1>
-    <h1>
-        {
-            smry.content
-        }
-    </h1>
+    {/* <h1>{smry.type}</h1> */}
+    <Markdown remarkPlugins={[remarkGfm]}>{smry.content}</Markdown>
 </div>
 }

@@ -7,10 +7,16 @@ import {
   SignedOut,
   UserButton,
 } from '@clerk/nextjs'
-import { Geist, Geist_Mono } from 'next/font/google'
+import { Geist, Geist_Mono, Google_Sans, Inter } from 'next/font/google'
 import './globals.css'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClient } from '@/lib/queryClient'
+
+const gSans = Google_Sans({
+  subsets: ["latin"],
+  variable: "--font-gsans",
+  display: "swap",
+});
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -21,6 +27,13 @@ const geistMono = Geist_Mono({
   variable: '--font-geist-mono',
   subsets: ['latin'],
 })
+
+const inter = Inter({
+  variable: '--font-inter',
+  subsets: ['latin'],
+})
+
+
 
 export const metadata: Metadata = {
   title: 'Clerk Next.js Quickstart',
@@ -37,20 +50,8 @@ export default function RootLayout({
       <html lang="en">
         <QueryClientProvider client={queryClient}>
 
-        <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-          <header className="flex justify-end items-center p-4 gap-4 h-16">
-            <SignedOut>
-              <SignInButton />
-              <SignUpButton>
-                <button className="bg-[#6c47ff] text-white rounded-full font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 cursor-pointer">
-                  Sign Up
-                </button>
-              </SignUpButton>
-            </SignedOut>
-            <SignedIn>
-              <UserButton />
-            </SignedIn>
-          </header>
+        <body className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} ${gSans.variable} antialiased`}>
+          
           {children}
         </body>
         </QueryClientProvider>

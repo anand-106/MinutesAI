@@ -5,6 +5,7 @@ import { useParams } from "next/navigation"
 import { VideoPlayer } from "@/app/components/videoPlayer";
 import { TranscriptComp } from "@/app/components/transcript";
 import { SummaryComp } from "@/app/components/Summary";
+import { SignedIn, SignedOut, SignInButton, SignUpButton, UserButton } from "@clerk/nextjs";
 
 
 export default function MeetingPage(){
@@ -28,7 +29,25 @@ export default function MeetingPage(){
 
     if(data)
     return  <div className="h-full w-screen">
-        <h1>Meeting #{meetingID}</h1>
+        <header className="flex justify-between items-center p-4 gap-4 h-16">
+            <div>
+            <h1 className="font-semibold text-xl font-gsans">Minutes AI</h1>
+            </div>
+            <div>
+
+            <SignedOut>
+              <SignInButton />
+              <SignUpButton>
+                <button className="bg-[#6c47ff] text-white rounded-full font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 cursor-pointer">
+                  Sign Up
+                </button>
+              </SignUpButton>
+            </SignedOut>
+            <SignedIn>
+              <UserButton />
+            </SignedIn>
+            </div>
+          </header>
         <div className="px-[200px] flex">
         <div>
 

@@ -2,6 +2,7 @@
 import { useMeetings } from "@/hooks/meetings"
 import { MeetingsList } from "@/types/types"
 import Link from "next/link"
+import { secondsToTimestamp } from "../utils/timestampConvert"
 
 export function MeetingsListCard(){
 
@@ -33,7 +34,14 @@ export function MeetingsListCard(){
  }
  
  function MeetingCard({meet}:{meet:MeetingsList}){
-     return <div className="flex flex-col rounded-xl border border-white/20 p-4 cursor-pointer">
-        <h1>{new Date(meet.created_at).toLocaleDateString()}</h1>
+     return <div className="flex flex-col rounded-xl border-3 border-[#494C59] p-4 cursor-pointer h-[200px] w-[300px] justify-between">
+        <div>
+
+        </div>
+        <div className="h-1/3">
+
+        <h1 className="font-inter">Meeting - {new Date(meet.created_at).toLocaleDateString()}</h1>
+        <h1>{secondsToTimestamp(meet.duration_seconds!)}</h1>
+        </div>
      </div>
  }
