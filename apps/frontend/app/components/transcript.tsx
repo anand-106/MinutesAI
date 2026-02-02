@@ -34,8 +34,10 @@ export function TranscriptComp({meet_id,onSeek}:{meet_id:string,onSeek:(seconds:
 }
 
 function Dialouge({dialouge,onSeek}:{dialouge:Dialouges,onSeek:(seconds:number)=>void}){
-return <div className="bg-[#15171B] rounded-2xl p-4"
+return <div className="bg-[#15171B] rounded-2xl p-4 cursor-pointer"
 onClick={()=>onSeek(dialouge.start_time)}
+    
+onMouseEnter={()=>onSeek(dialouge.start_time)}
 >
     <h1>{dialouge.text}</h1>
     <div className="flex justify-end">

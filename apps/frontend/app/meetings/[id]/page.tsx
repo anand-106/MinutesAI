@@ -62,7 +62,7 @@ export default function MeetingPage(){
             <TranscriptComp onSeek={handleSeek}  meet_id={meetingID!.toString()} />
         </div>
         <div className="w-1/2">
-            <SummaryComp meet_id={meetingID!.toString()}  />
+            <SummaryComp meet_id={meetingID!.toString()} onSeek={handleSeek} />
         </div>
         </div>
     </div>

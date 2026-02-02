@@ -2,8 +2,9 @@ import { useFetchSummaries, useSummarizeMeeting } from "@/hooks/meetings"
 import { SummaryOut } from "@/types/types"
 import Markdown from "react-markdown"
 import remarkGfm from 'remark-gfm'
+import { processTimeStampString } from "../utils/timestampProcess"
 
-export  function SummaryComp({meet_id}:{meet_id:string}){
+export  function SummaryComp({meet_id,onSeek}:{meet_id:string,onSeek:(seconds:number)=>void}){
 
     const {mutate,isPending,isError,data} = useSummarizeMeeting(meet_id,"detailed")
     return <div>
@@ -12,11 +13,11 @@ export  function SummaryComp({meet_id}:{meet_id:string}){
         className={`cursor-pointer `}
         onClick={()=>mutate()}
         >Get Summary</button>
-        <Summaries meet_id={meet_id} />
+        <Summaries onSeek={onSeek} meet_id={meet_id} />
     </div>
 }
 
-function Summaries({meet_id}:{meet_id:string}){
+function Summaries({meet_id,onSeek}:{meet_id:string,onSeek:(seconds:number)=>void}){
     const {data,isLoading,error} = useFetchSummaries(meet_id)
     if(error){
         console.error(error)
@@ -37,7 +38,7 @@ function Summaries({meet_id}:{meet_id:string}){
         {
             data.map((smry,idx)=>{
                 return <div key={idx} >
-                    <Summary smry={smry} />
+                    <Summary onSeek={onSeek} smry={smry} />
                 </div>
             })
         }
@@ -45,9 +46,29 @@ function Summaries({meet_id}:{meet_id:string}){
     }
 }
 
-function Summary({smry}:{smry:SummaryOut}){
-return <div>
-    {/* <h1>{smry.type}</h1> */}
-    <Markdown remarkPlugins={[remarkGfm]}>{smry.content}</Markdown>
-</div>
+function Summary({ smry ,onSeek}: { smry: SummaryOut ,onSeek:(seconds:number)=>void}) {
+    const processed = smry.content.replace(/(\[\[[^\]]+\]\])/g, '`$1`');
+  
+    return (
+      <Markdown
+        remarkPlugins={[remarkGfm]}
+        components={{
+          code: ({ children }) => {
+            const text = String(children);
+            if (text.startsWith('[[') && text.endsWith(']]')) {
+              return <BracketTimestamp onSeek={onSeek} value={text.slice(2, -2)} />;
+            }
+            return <code>{children}</code>;
+          },
+        }}
+      >
+        {processed}
+      </Markdown>
+    );
+  }
+
+function BracketTimestamp({value,onSeek}:{value:string,onSeek:(seconds:number)=>void}){
+    return <span className="bracket-token cursor-pointer text-blue-400"
+    onClick={()=>onSeek(processTimeStampString(value))}
+    >{value}</span>
 }
