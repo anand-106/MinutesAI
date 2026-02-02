@@ -2,7 +2,7 @@ import { usefetchMeetingDialouges } from "@/hooks/meetings"
 import { Dialouges } from "@/types/types"
 import { secondsToTimestamp } from "../utils/timestampConvert"
 
-export function TranscriptComp({meet_id}:{meet_id:string}){
+export function TranscriptComp({meet_id,onSeek}:{meet_id:string,onSeek:(seconds:number)=>void}){
     const {data,error,isLoading} = usefetchMeetingDialouges(meet_id)
  
     if(error){
@@ -25,7 +25,7 @@ export function TranscriptComp({meet_id}:{meet_id:string}){
 
             {
                 data.map(dia=>{
-                    return <Dialouge dialouge={dia} key={dia.id} />
+                    return <Dialouge onSeek={onSeek} dialouge={dia} key={dia.id} />
                 })
             }
             </div>
@@ -33,8 +33,10 @@ export function TranscriptComp({meet_id}:{meet_id:string}){
      }
 }
 
-function Dialouge({dialouge}:{dialouge:Dialouges}){
-return <div className="bg-[#15171B] rounded-2xl p-4">
+function Dialouge({dialouge,onSeek}:{dialouge:Dialouges,onSeek:(seconds:number)=>void}){
+return <div className="bg-[#15171B] rounded-2xl p-4"
+onClick={()=>onSeek(dialouge.start_time)}
+>
     <h1>{dialouge.text}</h1>
     <div className="flex justify-end">
         <h1>{secondsToTimestamp(dialouge.start_time)}</h1>

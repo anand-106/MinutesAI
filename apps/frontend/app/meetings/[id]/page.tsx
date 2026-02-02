@@ -2,14 +2,21 @@
 import { useMeeting } from "@/hooks/meetings"
 import 'video.js/dist/video-js.css';
 import { useParams } from "next/navigation"
-import { VideoPlayer } from "@/app/components/videoPlayer";
+import { VideoPlayer, VideoPlayerHandle } from "@/app/components/videoPlayer";
 import { TranscriptComp } from "@/app/components/transcript";
 import { SummaryComp } from "@/app/components/Summary";
 import { SignedIn, SignedOut, SignInButton, SignUpButton, UserButton } from "@clerk/nextjs";
+import { useRef } from "react";
 
 
 export default function MeetingPage(){
     const params = useParams()
+
+    const videoPlayerRef = useRef<VideoPlayerHandle>(null);
+
+    const handleSeek = (seconds: number) => {
+      videoPlayerRef.current?.seekTo(seconds);
+    };
 
     const meetingID = params.id
     const {data,error,isLoading} = useMeeting(meetingID!.toString())
@@ -51,8 +58,8 @@ export default function MeetingPage(){
         <div className="px-[200px] flex">
         <div>
 
-            <VideoPlayer id={meetingID!.toString()}  />
-            <TranscriptComp  meet_id={meetingID!.toString()} />
+            <VideoPlayer id={meetingID!.toString()}  ref={videoPlayerRef} />
+            <TranscriptComp onSeek={handleSeek}  meet_id={meetingID!.toString()} />
         </div>
         <div className="w-1/2">
             <SummaryComp meet_id={meetingID!.toString()}  />

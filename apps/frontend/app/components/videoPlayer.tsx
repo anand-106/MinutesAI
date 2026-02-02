@@ -1,16 +1,28 @@
 "use client"
 import { useMeetingVideoPresign } from "@/hooks/meetings";
-import { useEffect, useRef } from "react"
+import { useEffect, useRef,forwardRef,useImperativeHandle } from "react"
 import videojs from "video.js"
 import 'video.js/dist/video-js.css';
 
 
-export function VideoPlayer({id}:{id:string}){
+export interface VideoPlayerHandle {
+    seekTo: (seconds: number) => void;
+  }
+
+export const VideoPlayer = forwardRef<VideoPlayerHandle,{id:string}>(function VideoPlayer({id},ref){
 
     const VideoRef= useRef<HTMLVideoElement|null>(null)
     const playerRef = useRef<any>(null)
-
     const {data,error,isLoading} = useMeetingVideoPresign(id)
+
+    useImperativeHandle(ref,()=>({
+        seekTo:(seconds:number)=>{
+            if(playerRef.current){
+                playerRef.current.currentTime(seconds)
+            }
+        }
+    }))
+
 
     useEffect(()=>{
         if(!VideoRef.current || !data?.url || playerRef.current) return;
@@ -65,4 +77,4 @@ export function VideoPlayer({id}:{id:string}){
 
        </div>
     }
-}
+})
