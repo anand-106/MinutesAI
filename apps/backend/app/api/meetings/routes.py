@@ -123,18 +123,31 @@ def generate_meeting_summary(req:SummarizeIn,meeting_id:UUID,auth_user:ClerkUser
         meeting = db.query(Meeting).filter(Meeting.user_id==user.id,Meeting.id==meeting_id).first()
         if not meeting:
             raise HTTPException(status_code=404, detail="Meeting not found")
+        
+        summary = db.query(Summary).filter(Summary.meeting_id==meeting.id,Summary.type==req.mode).first()
+
+        if summary:
+            print("summary accessed from db")
+            return {
+                "type":summary.type,
+                "content":summary.content
+            }
+
         dialouges = db.query(Dialogue).filter(Dialogue.meeting_id==meeting.id).order_by(Dialogue.sequence).all()
 
         dialoge_text = dialouges_to_rich_text(dialouges)
 
         meeting_minutes = summarize_meeting(dialoge_text,req.mode)
 
-        summarize_row = Summary(content=meeting_minutes,type=SummaryType.detailed,status=SummaryStatus.completed,meeting_id=meeting_id)
-        db.add(summarize_row)
+        summary = Summary(content=meeting_minutes,type=SummaryType(req.mode),status=SummaryStatus.completed,meeting_id=meeting_id)
+        db.add(summary)
         db.commit()
-        db.refresh(summarize_row
-        
-        )
+        db.refresh(summary)
+
+        return {
+                "type":summary.type,
+                "content":summary.content
+            }
 
     except Exception as e:
         print(e)

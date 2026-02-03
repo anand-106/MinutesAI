@@ -55,7 +55,7 @@ export default function MeetingPage(){
             </SignedIn>
             </div>
           </header>
-        <div className="px-[200px] flex">
+        <div className="px-[200px] flex gap-6">
         <div>
 
             <VideoPlayer id={meetingID!.toString()}  ref={videoPlayerRef} />

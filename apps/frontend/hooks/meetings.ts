@@ -9,7 +9,7 @@ export function useMeetings(){
     const {getToken} = useAuth()
 
     const getMeetings = async () =>{
-        const token = await getToken();
+        const token = await getToken({skipCache:true});
     
         const res  = await axiosClient.get('/meetings/',{
             headers:{
@@ -96,25 +96,21 @@ export function usefetchMeetingDialouges(meet_id:string){
 }
 
 
-export function useSummarizeMeeting(meet_id:string,mode:"brief"|"detailed"|"action_items"|"decisions"|"custom"){
-    const {getToken} = useAuth()
-    const postSummarize = async ()=>{
+export function useSummarizeMeeting(meet_id: string) {
+    const { getToken } = useAuth();
+    const postSummarize = async (variables: { mode: "brief" | "detailed" | "action_items" | "decisions" | "custom" }) => {
         const token = await getToken();
-    
-        const res  = await axiosClient.post(`/meetings/${meet_id}/summarize`,{
-            mode
-        },{
-            headers:{
-                Authorization:`Bearer ${token}`
-            }
-        })
-        return res.data
-    }
+        const res = await axiosClient.post(
+            `/meetings/${meet_id}/summarize`,
+            { mode: variables.mode },
+            { headers: { Authorization: `Bearer ${token}` } }
+        );
+        return res.data as { type: string; content: string };
+    };
 
     return useMutation({
-     mutationFn:postSummarize
-    })
-
+        mutationFn: postSummarize,
+    });
 }
 
 export function useFetchSummaries(meet_id:string){

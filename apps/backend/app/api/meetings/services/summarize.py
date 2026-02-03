@@ -83,7 +83,82 @@ def summarize_meeting(dialouge_text:str,summarize_mode:str):
 
             {dialouge_text}
 
-    """
+    """,
+    "brief": f"""
+            You are an expert meeting summarizer. Produce a short, high-level summary of the meeting.
+
+            INPUT: Raw meeting transcript (may have filler words, multiple speakers).
+
+            OUTPUT: A brief summary (4–6 bullets max) covering:
+            - What was discussed
+            - Any key outcomes or decisions
+            - Main next steps if mentioned
+
+            Rules:
+            - Be concise. No sections or tables.
+            - Use formal, neutral language.
+            - Do NOT invent facts. If transcript is unclear, say so.
+            - Timestamps in transcript may appear as [[HH:MM:SS]]; you may reference them if relevant.
+
+            The transcription of the meeting is:
+
+            {dialouge_text}
+    """,
+    "action_items": f"""
+            You are an expert meeting secretary. Extract ONLY action items from the meeting transcript.
+
+            INPUT: Raw meeting transcript.
+
+            OUTPUT: A single section "## Action Items" with a markdown table:
+
+            | Task | Owner | Deadline |
+            |------|-------|----------|
+            | …    | …     | …        |
+
+            Rules:
+            - Include every stated or implied task, follow-up, or commitment.
+            - Use "Unassigned" or "Not specified" for missing owner/deadline. Do NOT invent them.
+            - If no action items appear in the transcript, output: "## Action Items" then a newline then "No action items were mentioned."
+            - Use formal language. Timestamps from transcript (e.g. [[HH:MM:SS]]) may be included in the Task column if useful.
+
+            The transcription of the meeting is:
+
+            {dialouge_text}
+    """,
+    "decisions": f"""
+            You are an expert meeting secretary. Extract ONLY decisions made during the meeting.
+
+            INPUT: Raw meeting transcript.
+
+            OUTPUT: A single section "## Decisions Made" with a bullet list of decisions.
+
+            Rules:
+            - List only explicit or clearly implied decisions (choices made, agreements, approvals).
+            - Do NOT list discussion topics or open questions—only actual decisions.
+            - If no decisions are evident, output: "## Decisions Made" then a newline then "No final decisions were made."
+            - Use formal, neutral language. Do NOT invent decisions.
+
+            The transcription of the meeting is:
+
+            {dialouge_text}
+    """,
+    "custom": f"""
+            You are an expert meeting secretary. Produce a flexible, stakeholder-friendly summary of the meeting.
+
+            INPUT: Raw meeting transcript.
+
+            OUTPUT: A concise summary that includes:
+            - 2–3 sentence overview
+            - Bullet list of key points
+            - Any decisions and action items in a short form
+
+            Format in clear markdown (headings and bullets). Adapt structure to what the transcript actually contains.
+            Use formal language. Do NOT invent facts. If the transcript is too short or unclear, note that in the summary.
+
+            The transcription of the meeting is:
+
+            {dialouge_text}
+    """,
 }
 
     llm = ChatGroq(
