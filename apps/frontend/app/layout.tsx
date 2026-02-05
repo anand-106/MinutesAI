@@ -62,7 +62,7 @@ export default function RootLayout({
       <html lang="en">
         <QueryClientProvider client={queryClient}>
 
-        <body className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} ${gSans.variable} ${youngSerif.variable} ${ibmPixelMono.variable} antialiased`}>
+        <body className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} ${gSans.variable} ${youngSerif.variable} text-white antialiased`}>
           
           {children}
         </body>

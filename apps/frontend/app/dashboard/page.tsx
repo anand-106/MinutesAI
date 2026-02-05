@@ -28,14 +28,14 @@ export default function DashBoard(){
             </SignedIn>
             </div>
           </header>
-          <div className="pt-[15s0px] pb-[75px] flex flex-col gap-10 justify-center items-center ">
+          <div className="pt-[150px] pb-[75px] flex flex-col gap-10 justify-center items-center ">
             <h1 className="text-7xl font-black font-gsans">Minutes AI</h1>
 
     <MeetingInput />
           </div>
           <div className="w-full px-[300px]">
             <div className="mb-12">
-                <h1 className=" font-semibold text-2xl font-gsans">
+                <h1 className="text-[#7BF080] font-semibold text-2xl font-gsans">
                     My Calls
                 </h1>
             </div>
@@ -90,7 +90,7 @@ function MeetingInput(){
         <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 bg-black/50" />
 
-<Dialog.Content className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-white p-6 rounded-lg">
+<Dialog.Content className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 p-6 rounded-lg">
   <Dialog.Title className="text-lg font-semibold">
     Success
   </Dialog.Title>

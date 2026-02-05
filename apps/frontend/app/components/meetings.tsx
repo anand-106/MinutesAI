@@ -40,8 +40,8 @@ export function MeetingsListCard(){
         </div>
         <div className="h-1/3">
 
-        <h1 className="font-inter">Meeting - {new Date(meet.created_at).toLocaleDateString()}</h1>
-        <h1>{secondsToTimestamp(meet.duration_seconds!)}</h1>
+        <h1 className="font-inter ">Meeting - {new Date(meet.created_at).toLocaleDateString()}</h1>
+        <h1 className="text-[#7BF080]/70">{secondsToTimestamp(meet.duration_seconds!)}</h1>
         </div>
      </div>
  }
