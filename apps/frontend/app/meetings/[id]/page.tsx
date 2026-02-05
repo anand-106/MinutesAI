@@ -35,7 +35,7 @@ export default function MeetingPage(){
         </div>
 
     if(data)
-    return  <div className="h-full w-screen">
+    return  <div className="min-h-screen">
         <header className="flex justify-between items-center p-4 gap-4 h-16">
             <div>
             <h1 className="font-semibold text-xl font-gsans">Minutes AI</h1>

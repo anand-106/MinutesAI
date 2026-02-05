@@ -21,7 +21,7 @@ export function MeetingsListCard(){
          </h1>
      </div>
      if(data){
-         return <div className="flex">
+         return <div className="flex gap-4">
              {
                  data.map(meet=>{
                      return <Link href={`meetings/${meet.id}`} key={meet.id} >

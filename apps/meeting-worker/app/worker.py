@@ -15,4 +15,5 @@ class WorkerSettings:
     functions= [join_meeting]
 
     redis_settings = REDIS_SETTINGS
+    function_timeout = 10800
 

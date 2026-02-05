@@ -13,7 +13,23 @@ async def join_meeting(ctx,payload):
     recorder.start_audio()
     await recorder.start_browser()
     recorder.start_ffmpeg()
-    await asyncio.sleep(30)
+    
+    await recorder.page.wait_for_function(
+    """
+    () => {
+        const texts = [
+            "Your host ended the meeting for everyone",
+            "You left the meeting",
+            "You’ve left the call",
+            "The call ended because everyone left"
+        ];
+        return texts.some(t => document.body.innerText.includes(t));
+    }
+    """,
+    timeout=1000*60*60
+)
+
+
 
     await recorder.stop()
     recorder.start_audio_convert()

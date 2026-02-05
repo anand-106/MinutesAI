@@ -1,22 +1,17 @@
 "use client"
 
 import { useFetchSummaries, useSummarizeMeeting } from "@/hooks/meetings"
-import { SummaryOut } from "@/types/types"
 import Markdown from "react-markdown"
 import remarkGfm from 'remark-gfm'
 import { processTimeStampString } from "../utils/timestampProcess"
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useParams } from "next/navigation"
 
 export function SummaryComp({ meet_id, onSeek }: { meet_id: string; onSeek: (seconds: number) => void }) {
     const { mutate } = useSummarizeMeeting(meet_id);
     return (
         <div>
-            <h1>Summary</h1>
-            <button className="cursor-pointer" onClick={() => mutate({ mode: "detailed" })}>
-                Get Summary
-            </button>
             <Summaries onSeek={onSeek} meet_id={meet_id} />
         </div>
     );
@@ -80,6 +75,16 @@ function SummaryDropDown({
     const params = useParams();
     const meetingID = params.id;
     const { mutate, isPending } = useSummarizeMeeting(meetingID!.toString());
+
+    useEffect(()=>{
+      mutate({
+        mode:"brief"
+      },
+    {
+      onSuccess:(data) => setSmry(data.content ?? "")
+    }
+    )
+    },[])
 
     return (
         <DropdownMenu.Root>

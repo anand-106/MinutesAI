@@ -7,7 +7,7 @@ import {
   SignedOut,
   UserButton,
 } from '@clerk/nextjs'
-import { Geist, Geist_Mono, Google_Sans, Inter } from 'next/font/google'
+import { Geist, Geist_Mono, Google_Sans, Inter ,Young_Serif,IBM_Plex_Mono} from 'next/font/google'
 import './globals.css'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClient } from '@/lib/queryClient'
@@ -17,6 +17,18 @@ const gSans = Google_Sans({
   variable: "--font-gsans",
   display: "swap",
 });
+
+const youngSerif = Young_Serif({
+  weight: '400',
+  variable: '--font-young-serif',
+  subsets: ['latin'],
+})
+
+const ibmPixelMono = IBM_Plex_Mono({
+  weight: ['400', '500', '600', '700'],  
+  variable: '--font-ibm-plex-mono',
+  subsets: ['latin'],
+})
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -50,7 +62,7 @@ export default function RootLayout({
       <html lang="en">
         <QueryClientProvider client={queryClient}>
 
-        <body className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} ${gSans.variable} antialiased`}>
+        <body className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} ${gSans.variable} ${youngSerif.variable} ${ibmPixelMono.variable} antialiased`}>
           
           {children}
         </body>

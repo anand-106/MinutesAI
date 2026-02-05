@@ -3,9 +3,11 @@ import axiosClient from "@/lib/axiosClient"
 import { SignedIn, SignedOut, SignInButton, SignUpButton, useAuth, UserButton } from "@clerk/nextjs"
 import { useState } from "react"
 import { MeetingsListCard } from "../components/meetings"
+import { useMutation } from "@tanstack/react-query"
+import * as Dialog from "@radix-ui/react-dialog";
 
 export default function DashBoard(){
-    return <div className="w-screen h-screen bg-[#040406]">
+    return <div className="w-full min-h-screen bg-[#040406]">
         
         <header className="flex justify-between items-center p-4 gap-4 h-16">
             <div>
@@ -26,7 +28,8 @@ export default function DashBoard(){
             </SignedIn>
             </div>
           </header>
-          <div className="pt-[200px] pb-[75px] flex justify-center items-center ">
+          <div className="pt-[15s0px] pb-[75px] flex flex-col gap-10 justify-center items-center ">
+            <h1 className="text-7xl font-black font-gsans">Minutes AI</h1>
 
     <MeetingInput />
           </div>
@@ -45,11 +48,12 @@ export default function DashBoard(){
 
 function MeetingInput(){
     const [meetLink,setMeetLink] = useState("")
+    const [open, setOpen] = useState(false);
 
     const {getToken} = useAuth()
 
     const sendMeetLink = async()=>{
-        try{
+
             const token = await getToken()
             const res = await axiosClient.post('/meetings/join',{
                 link:meetLink
@@ -60,10 +64,15 @@ function MeetingInput(){
             })
 
             return res
-        }catch(e){
-            console.error(e)
-        }
+
     }
+
+    const {mutate,isPending} = useMutation({
+        mutationFn:sendMeetLink,
+        onSuccess:()=>{
+            setOpen(true)
+        }
+    })
 
     return <div className="h-[60px] border-3 border-[#494C59] rounded-full pl-7 py-1 pr-1 bg-[#131316]">
  
@@ -73,8 +82,33 @@ function MeetingInput(){
         className="h-full w-[500px] outline-0 placeholder:text-[#777A88] font-normal font-inter text-[18px]"
         value={meetLink} onChange={(e)=>setMeetLink(e.target.value)} placeholder="Enter meeting link" />
         <button 
-        className="bg-white text-black font-normal font-inter text-[18px] rounded-full w-[120px] h-full cursor-pointer"
-        onClick={sendMeetLink} >Enter</button>
+        disabled={isPending}
+        className={`bg-white text-black font-normal font-inter text-[18px] rounded-full w-[120px] h-full ${isPending?"cursor-not-allowed":"cursor-pointer"}`}
+        onClick={()=>mutate()} >Enter</button>
+
+        <Dialog.Root open={open} onOpenChange={setOpen}>
+        <Dialog.Portal>
+        <Dialog.Overlay className="fixed inset-0 bg-black/50" />
+
+<Dialog.Content className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-white p-6 rounded-lg">
+  <Dialog.Title className="text-lg font-semibold">
+    Success
+  </Dialog.Title>
+
+  <Dialog.Description className="mt-2 text-sm text-gray-600">
+    MinutesAI bot is on the Way!.
+  </Dialog.Description>
+
+  <div className="mt-4 flex justify-end">
+    <Dialog.Close asChild>
+      <button className="px-3 py-1 rounded bg-green-600 text-white">
+        OK
+      </button>
+    </Dialog.Close>
+  </div>
+</Dialog.Content>
+        </Dialog.Portal>
+        </Dialog.Root>
 
     </div>
 }
