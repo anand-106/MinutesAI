@@ -2,6 +2,7 @@
 import Link from "next/link"
 import { Spotlight } from "@/components/ui/spotlight-new";
 import { SignedIn, SignedOut, SignInButton, SignUpButton, UserButton } from "@clerk/nextjs";
+import Image from "next/image";
 
 export default function Home() {
   return (
@@ -58,12 +59,24 @@ function Header(){
 type FeatureCardProps = {
   title: string;
   description: string;
+  alt: string;
+  path: string;
+  imageZoom?: number;
 };
 
-function FeatureCard({ title, description }: FeatureCardProps) {
+function FeatureCard({ title, description, alt, path, imageZoom = 1 }: FeatureCardProps) {
   return (
     <div className="w-1/2 h-[600px] p-8 flex">
       <div className="border border-white/20 backdrop-blur-xl rounded-2xl flex flex-col flex-1 gap-5 justify-center p-10 w-full">
+      <div className="relative flex-1 min-h-0 rounded-lg overflow-hidden">
+          <Image 
+            src={path}
+            alt={alt}
+            fill
+            className="object-contain"
+            style={{ transform: `scale(${imageZoom})` }}
+          />
+        </div>
         <h1 className="text-[#7BF080] font-semibold font-young-serif text-4xl">
           {title}
         </h1>
@@ -78,25 +91,44 @@ function Features() {
     {
       title: "Join any meeting with a link",
       description: "Paste a Google Meet (or supported) link. MinutesAI joins as a participant and stays in the background.",
+      path: "/images/features/meet-join.webp",
+      alt: "meet_join",
+      imageZoom: .9,
     },
     {
       title: "Record and transcribe automatically",
       description: "Audio is recorded and transcribed with AI (Deepgram + Groq) so every word is searchable.",
+      path: "/images/features/transcribe.webp",
+      alt: "transcribe",
+      imageZoom: .7,
     },
     {
       title: "AI summaries, your way",
       description: "Get brief or detailed summaries, action items, decisions, or custom formats—all in one view.",
+      path: "/images/features/summary.png",
+      alt: "summary",
+      imageZoom: 1.25,
     },
     {
       title: "Transcript that drives the replay",
       description: "Click any part of the transcript to jump to that moment in the recording. Timestamps in summaries do the same.",
+      path: "/images/features/transcript.png",
+      alt: "transcript",
+      imageZoom: 1,
     },
   ];
 
   return (
     <div className="w-full flex flex-wrap">
       {features.map((feature, index) => (
-        <FeatureCard key={index} title={feature.title} description={feature.description} />
+        <FeatureCard
+          key={index}
+          title={feature.title}
+          description={feature.description}
+          path={feature.path}
+          alt={feature.alt}
+          imageZoom={feature.imageZoom}
+        />
       ))}
     </div>
   );
