@@ -58,7 +58,7 @@ def get_meetings(auth_user:ClerkUser=Depends(verify_clerk_user),db:Session=Depen
         if not user:
             raise HTTPException(status_code=404, detail="User not found")
 
-        meetings = db.query(Meeting).filter(Meeting.user_id == user.id).all()
+        meetings = db.query(Meeting).filter(Meeting.user_id == user.id,Meeting.status == Status.finished).all()
         return meetings
     except Exception as e:
         print(e)

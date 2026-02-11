@@ -34,6 +34,7 @@ class Meeting(Base):
     upload_id = Column(String,nullable=True)
     status = Column(Enum(Status),default=Status.not_started)
     duration_seconds = Column(Integer, nullable=True)
+    start_time = Column(DateTime(timezone=True),nullable=True)
     created_at = Column(DateTime(timezone=True),server_default=func.now())
 
     user = relationship("User",back_populates="meetings")
@@ -114,3 +115,30 @@ class Summary(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
     meeting = relationship("Meeting")
+
+
+class CalendarWebhook(Base):
+    __tablename__ = "calendar_webhooks"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
+
+    user_id = Column(
+        UUID(as_uuid=True),
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False,
+        unique=True 
+    )
+
+    calendar_id = Column(String, nullable=False, default="primary")
+
+    channel_id = Column(String, nullable=False, unique=True)
+    resource_id = Column(String, nullable=False)
+    resource_uri = Column(String, nullable=True)
+
+    expiration = Column(DateTime(timezone=True), nullable=True)
+
+    sync_token = Column(String, nullable=True)
+
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    user = relationship("User")
