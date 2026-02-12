@@ -10,6 +10,7 @@ from app.db.models import CalendarWebhook
 load_dotenv()
 
 WEBHOOK_SECRET=os.getenv("WEBHOOK_SECRET")
+WEBHOOK_ADDRESS=os.getenv("WEBHOOK_ADDRESS")
 
 async def subscribe_to_calender_webhook(user_id:UUID,clerk_id:str,sync_token:str,db:Session):
 
@@ -26,7 +27,7 @@ async def subscribe_to_calender_webhook(user_id:UUID,clerk_id:str,sync_token:str
     body = {
     "id": f"channel_{str(user_id)}",
     "type": "web_hook",
-    "address": "https://likely-inspired-mite.ngrok-free.app/webhook/google-calendar",
+    "address": f"{WEBHOOK_ADDRESS}/webhook/google-calendar",
     "token": WEBHOOK_SECRET
     }
 
