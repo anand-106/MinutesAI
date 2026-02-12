@@ -35,7 +35,7 @@ export default function MeetingPage(){
         </div>
 
     if(data)
-    return  <div className="min-h-screen">
+    return  <div className="min-h-screen bg-black">
         <header className="flex justify-between items-center p-4 gap-4 h-16">
             <div>
             <h1 className="font-semibold text-xl font-gsans">Minutes AI</h1>
@@ -56,7 +56,7 @@ export default function MeetingPage(){
             </div>
           </header>
         <div className="px-[200px] flex gap-6">
-        <div>
+        <div className="w-1/3">
 
             <VideoPlayer id={meetingID!.toString()}  ref={videoPlayerRef} />
             <TranscriptComp onSeek={handleSeek}  meet_id={meetingID!.toString()} />

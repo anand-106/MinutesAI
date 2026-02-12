@@ -1,6 +1,35 @@
 
 name: minutesai
 services:
+
+  minutesai-backend:
+    build: ../apps/backend
+    container_name: minutesai-backend
+    restart: unless-stopped
+    env_file:
+      - ../apps/backend/.env
+    ports:
+      - "8000:8000"
+    depends_on:
+      minutesai-postgres:
+        condition: service_healthy
+      minutesai-redis:
+        condition: service_healthy
+    command: ["uv", "run", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+  
+  minutesai-worker:
+    build: ../apps/meeting-worker
+    container_name: minutesai-worker
+    restart: unless-stopped
+    env_file:
+      - ../apps/meeting-worker/.env
+    depends_on:
+      minutesai-postgres:
+        condition: service_healthy
+      minutesai-redis:
+        condition: service_healthy
+    command: ["uv", "run", "arq", "app.worker.WorkerSettings"]
+      
   minutesai-postgres:
     image: postgres:16
     container_name: minutesai-postgres
