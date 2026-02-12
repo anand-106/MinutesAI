@@ -1,6 +1,7 @@
 import asyncio
 import os
 import subprocess
+import time
 from app.services.browser.join_button import join_button
 from app.services.browser.confirm_join import confirm_join
 from playwright.async_api import async_playwright
@@ -15,6 +16,7 @@ class RecordingJob:
         self.display = ":99"
         self.audio_sink = "meeting_sink"
         self.audio_module_id=None
+        self.pulseaudio_process = None
         self.ffmpeg_process = None
         self.audio_convert_process = None
         self.context = None
@@ -31,10 +33,16 @@ class RecordingJob:
         xvfb_process = subprocess.Popen([
         "Xvfb", self.display, "-screen", "0", "1280x720x24", "-ac"
         ])
-        import time
         time.sleep(2)  
         return xvfb_process
-    
+
+    def start_pulseaudio(self):
+        self.pulseaudio_process = subprocess.Popen(
+            ["pulseaudio", "--daemonize=no", "--exit-idle-time=-1"],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+        )
+        time.sleep(1)
 
     def start_audio(self):
 
@@ -201,6 +209,10 @@ class RecordingJob:
         await self.context.close()
         await self.browser.close()
         await self.playwright.stop()
+
+        if self.pulseaudio_process:
+            self.pulseaudio_process.terminate()
+            self.pulseaudio_process.wait()
 
         
 

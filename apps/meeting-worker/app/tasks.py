@@ -10,6 +10,7 @@ async def join_meeting(ctx,payload):
     recorder = RecordingJob(meet_link=meet_link,meeting_id=meeting_id,user_id=user_id)
 
     recorder.start_display()
+    recorder.start_pulseaudio()
     recorder.start_audio()
     await recorder.start_browser()
     recorder.start_ffmpeg()
