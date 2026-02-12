@@ -5,6 +5,9 @@ RUN apt-get update \
      build-essential \
      libpq-dev \
      python3-dev \
+     xvfb \
+     pulseaudio \
+     ffmpeg \
   && rm -rf /var/lib/apt/lists/*
 
 ENV PYTHONDONTWRITEBYTECODE=1
@@ -18,6 +21,8 @@ WORKDIR /app
 COPY pyproject.toml uv.lock ./
 
 RUN uv sync --locked
+
+RUN uv run playwright install --with-deps chromium
 
 COPY . .
 
