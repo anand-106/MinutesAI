@@ -22,7 +22,13 @@ async def verify_clerk_user(request: Request)->ClerkUser:
     try:
         auth_state = clerk.authenticate_request(
             request,
-            AuthenticateRequestOptions(authorized_parties=["http://localhost:3000","http://127.0.0.1:3000"])
+            AuthenticateRequestOptions(authorized_parties=[
+                "http://localhost:3000",
+                "http://127.0.0.1:3000",
+                "https://minutesai.anands.codes",
+                "https://www.minutesai.anands.codes",
+                "https://minutes-ai-frontend-fu915qd6k-anand-ss-projects-ac7bb599.vercel.app"
+            ])
         )
     except Exception as e:
         print(e)
