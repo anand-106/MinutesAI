@@ -1,4 +1,4 @@
-from datetime import timedelta
+from datetime import datetime, timedelta, timezone
 import os
 from arq import create_pool
 from arq.connections import RedisSettings
@@ -45,22 +45,35 @@ async def clerk_signup(request:Request,db:Session=Depends(get_db)):
         events = await list_calender_events(id)
         meeting_job_queue = await create_pool(RedisSettings.from_dsn(redis_dsn))
 
+        sync_token = None
+
         for evnt in events:
+
+            scheduled_at = evnt["start_time"] - timedelta(minutes=2)
+            now_utc = datetime.now(timezone.utc)
+
+            # Skip events whose scheduled time is already in the past (or effectively now)
+            if scheduled_at <= now_utc:
+                continue
 
             meeting_row= Meeting(user_id=user.id,link=evnt["url"],status=Status.not_started)
             db.add(meeting_row)
             db.commit()
             db.refresh(meeting_row)
 
-            await meeting_job_queue.enqueue_job("join_meeting",{
-                "user_id":str(user.id),
-                "meet-link":meeting_row.link,
-                "meeting_id":meeting_row.id,
-            },
-            _defer_until=evnt["start_time"] - timedelta(minutes=2)
+            sync_token=evnt["sync_token"]
+
+            await meeting_job_queue.enqueue_job(
+                "join_meeting",
+                {
+                    "user_id": str(user.id),
+                    "meet-link": meeting_row.link,
+                    "meeting_id": meeting_row.id,
+                },
+                _defer_until=scheduled_at,
             )
         
-        await subscribe_to_calender_webhook(user_id=user.id,clerk_id=user.external_auth_id,db=db)
+        await subscribe_to_calender_webhook(user_id=user.id,clerk_id=user.external_auth_id,db=db,sync_token=sync_token)
 
     else:
         print("User already exists on db")

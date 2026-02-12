@@ -82,16 +82,35 @@ class RecordingJob:
         self.page = await self.context.new_page()
 
         await self.page.goto(self.meet_link,timeout=60000)
+        # Save a screenshot before attempting to join the meeting (for debugging)
+        try:
+            await self.page.screenshot(
+                path=f"recordings/{self.meeting_id}_before_join.png",
+                full_page=True,
+            )
+        except Exception:
+            # Screenshot failures shouldn't block the recording flow
+            pass
 
         await self.page.wait_for_selector("button",timeout=30000)
 
-        mic_btn = self.page.get_by_role("button",name="Turn off microphone")
+        # Save a screenshot before attempting to join the meeting (for debugging)
+        try:
+            await self.page.screenshot(
+                path=f"recordings/{self.meeting_id}_before_join.png",
+                full_page=True,
+            )
+        except Exception:
+            # Screenshot failures shouldn't block the recording flow
+            pass
 
+
+        mic_btn = self.page.get_by_role("button",name="Turn off microphone")
         await mic_btn.click()
 
         cam_btn = self.page.get_by_role("button",name="Turn off camera")
-
         await cam_btn.click()
+
 
         await join_button(self.page)
         print("clicked join button")

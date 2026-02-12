@@ -11,7 +11,7 @@ load_dotenv()
 
 WEBHOOK_SECRET=os.getenv("WEBHOOK_SECRET")
 
-async def subscribe_to_calender_webhook(user_id:UUID,clerk_id:str,db:Session):
+async def subscribe_to_calender_webhook(user_id:UUID,clerk_id:str,sync_token:str,db:Session):
 
     token = await get_google_token(clerk_id)
     
@@ -49,7 +49,7 @@ async def subscribe_to_calender_webhook(user_id:UUID,clerk_id:str,db:Session):
             tz=timezone.utc
         )
         
-        webhook_row= CalendarWebhook(channel_id=channel_id,user_id=user_id,resource_id=resourceId,resource_uri=resourceUri,expiration=expiration_dt)
+        webhook_row= CalendarWebhook(channel_id=channel_id,user_id=user_id,resource_id=resourceId,resource_uri=resourceUri,expiration=expiration_dt,sync_token=sync_token)
         db.add(webhook_row)
         db.commit()
         db.refresh(webhook_row)

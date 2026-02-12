@@ -13,6 +13,9 @@ async def list_calender_events(user_id:str):
             url="https://www.googleapis.com/calendar/v3/calendars/primary/events",
             headers={
                 "Authorization": f"Bearer {token}"
+            },
+            params = {
+                "singleEvents": True
             }
         )
 
@@ -21,9 +24,11 @@ async def list_calender_events(user_id:str):
         
         events =  resp.json()
 
+        sync_token = events.get("nextSyncToken")
+
         meetings = []
 
-        for itm in events["items"]:
+        for itm in events.get("items", []):
 
             conferenceData = itm.get("conferenceData")
             if not conferenceData:
@@ -40,7 +45,8 @@ async def list_calender_events(user_id:str):
                     meetings.append(
                         {
                             "url":ep["uri"],
-                            "start_time":dt_utc
+                            "start_time":dt_utc,
+                            "sync_token":sync_token
                         }
                     )
 
